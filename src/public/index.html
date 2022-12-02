@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+        name="description"
+        content="Juego de preguntas y respuestas multijugador conquistando el cerebro."
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+        
+    <title>PsicoWorld</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="/index.css" />
+    <link rel="stylesheet" type="text/css" href="./css/btn.css" />
+    
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="Inicio-Sala-Espera">
+        <div class="Descripcion">
+            <h1 class="h1_desc">Descripción</h1>
+            <p class="desc_text">Es más que un simple juego de preguntas y respuestas. Conquista todas las partes del cerebro mientras respondes preguntas. Pon a prueba tu conocimiento.</p>
+        </div>
+        
+        <div class="Espera">
+            <p class="Contador">Esperando Jugadores: <span id="u_c">0</span><span>/4</span></p>
+            <button name="Emp" class="custom-btn btn-7" onclick="EmpezarJuego();"><span>Empezar Juego</span></button>
+        </div>
+    </div>
+    <div id="Juego">
+        <div id="ContenedorPantalla">
+            <div id="Frame">
+                <img id="parte_1" src='./images/parte1.png' class='Cer' alt="Parte del cerebro 1" />
+                <img id="parte_2" src='./images/parte2.png' class='Cer' alt="Parte del cerebro 2"/>
+                <img id="parte_3" src='./images/parte3.png' class='Cer' alt="Parte del cerebro 3"/>
+                <img id="parte_4" src='./images/parte4.png' class='Cer' alt="Parte del cerebro 4"/>
+                <img id="parte_5" src='./images/parte5.png' class='Cer' alt="Parte del cerebro 5"/>
+                <img id="parte_6" src='./images/parte6.png' class='Cer' alt="Parte del cerebro 6"/>
+                <img id="parte_7" src='./images/parte7.png' class='Cer' alt="Parte del cerebro 7"/>
+                <img id="parte_8" src='./images/parte8.png' class='Cer' alt="Parte del cerebro 8"/>
+                <img id="parte_9" src='./images/parte9.png' class='Cer' alt="Parte del cerebro 9"/>
+                <img id="parte_10" src='./images/parte10.png' class='Cer' alt="Parte del cerebro 10"/>
+                <img id="parte_11" src='./images/parte11.png' class='Cer' alt="Parte del cerebro 11"/>
+                <img id="parte_12" src='./images/parte12.png' class='Cer' alt="Parte del cerebro 12"/>
+                <img id="parte_13" src='./images/parte13.png' class='Cer' alt="Parte del cerebro 13"/>
+                <img id="parte_14" src='./images/parte14.png' class='Cer' alt="Parte del cerebro 14"/>
+                <img id="parte_15" src='./images/parte15.png' class='Cer' alt="Parte del cerebro 15"/>
+                <img id="parte_16" src='./images/parte16.png' class='Cer' alt="Parte del cerebro 16"/>
+                <img id="parte_17" src='./images/parte17.png' class='Cer' alt="Parte del cerebro 17"/>
+                <img src='./images/neurona.png' id='Ganador' alt="Neurona Player1"/>
+            </div>
+            <div id="Jugadores">
+                <div id="Player1">
+                    <img src='./images/neurona.png' class='imgR' alt="Neurona Player1"/>
+                </div>
+                <div id="Player2">
+                    <img src='./images/neurona.png' class='imgR' alt="Neurona Player2"/>
+                </div>
+                <div id="Player3">
+                    <img src='./images/neurona.png' class='imgR' alt="Neurona Player3"/>
+                </div>
+                <div id="Player4">
+                    <img src='./images/neurona.png' class='imgR' alt="Neurona Player4"/>
+                </div>
+            </div>
+            <div id="JugadoresPuntuacion">
+                <div id="PuntuacionPlayer1">
+                    0
+                </div>
+                <div id="PuntuacionPlayer2">
+                    0
+                </div>
+                <div id="PuntuacionPlayer3">
+                    0
+                </div>
+                <div id="PuntuacionPlayer4">
+                    0
+                </div>
+            </div>
+            <div id="ContenedorPregunta">
+                <button id="Pregunta"></button>
+                <button id="Item1"></button>
+                <button id="Item2"></button>
+                <button id="Item3"></button>
+                <button id="Item4"></button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let PartesDisponibles = 0;
+        let Aleatorio = 0;
+        let tiempo = 0;
+
+        socket = io();
+        socket.on("actualizar", (usuarios_conectados)=>{
+            document.getElementById("u_c").innerHTML = usuarios_conectados; 
+        })
+
+        socket.on("GameOver", (Nombre)=>{
+            setTimeout(MostrarGanador,2000,Nombre);
+        })
+
+        function MostrarGanador(Nombre){
+            Parte_1 = document.getElementById("parte_1");
+            Parte_2 = document.getElementById("parte_2");
+            Parte_3 = document.getElementById("parte_3");
+            Parte_4 = document.getElementById("parte_4");
+            Parte_5 = document.getElementById("parte_5");
+            Parte_6 = document.getElementById("parte_6");
+            Parte_7 = document.getElementById("parte_7");
+            Parte_8 = document.getElementById("parte_8");
+            Parte_9 = document.getElementById("parte_9");
+            Parte_10 = document.getElementById("parte_10");
+            Parte_11 = document.getElementById("parte_11");
+            Parte_12 = document.getElementById("parte_12");
+            Parte_13 = document.getElementById("parte_13");
+            Parte_14 = document.getElementById("parte_14");
+            Parte_15 = document.getElementById("parte_15");
+            Parte_16 = document.getElementById("parte_16");
+            Parte_17 = document.getElementById("parte_17");
+
+            Ganador = document.getElementById("Ganador");
+
+            Parte_1.style.visibility = "hidden" ;
+            Parte_2.style.visibility = "hidden" ;
+            Parte_3.style.visibility = "hidden" ;
+            Parte_4.style.visibility = "hidden" ;
+            Parte_5.style.visibility = "hidden" ;
+            Parte_6.style.visibility = "hidden" ;
+            Parte_7.style.visibility = "hidden" ;
+            Parte_8.style.visibility = "hidden" ;
+            Parte_9.style.visibility = "hidden" ;
+            Parte_10.style.visibility = "hidden";
+            Parte_11.style.visibility = "hidden";
+            Parte_12.style.visibility = "hidden";
+            Parte_13.style.visibility = "hidden";
+            Parte_14.style.visibility = "hidden";
+            Parte_15.style.visibility = "hidden";
+            Parte_16.style.visibility = "hidden";
+            Parte_17.style.visibility = "hidden";
+
+            Ganador.style.visibility = "visible";
+
+            if(Nombre == "Player1"){
+                Ganador.style.filter = 'invert(19%) sepia(92%) saturate(5023%) hue-rotate(315deg) brightness(95%) contrast(96%)';
+            }
+            else if(Nombre == "Player2"){
+                Ganador.style.filter = 'invert(15%) sepia(90%) saturate(1766%) hue-rotate(345deg) brightness(111%) contrast(98%)';
+            }
+            else if(Nombre == "Player3"){
+                Ganador.style.filter = 'invert(25%) sepia(100%) saturate(7262%) hue-rotate(354deg) brightness(106%) contrast(87%)';
+            }
+            else if(Nombre == "Player4"){
+                Ganador.style.filter = 'invert(20%) sepia(16%) saturate(4900%) hue-rotate(164deg) brightness(88%) contrast(89%)';
+            }
+
+        }
+
+
+        socket.on("ActPuntaje", (Jugadores)=>{
+            document.getElementById("PuntuacionPlayer1").textContent = Jugadores["Player1"][2]; 
+            document.getElementById("PuntuacionPlayer2").textContent = Jugadores["Player2"][2]; 
+            document.getElementById("PuntuacionPlayer3").textContent = Jugadores["Player3"][2]; 
+            document.getElementById("PuntuacionPlayer4").textContent = Jugadores["Player4"][2]; 
+        })
+
+        socket.on("Marco", (Color)=>{
+            let FrameC = document.getElementById("Frame"); 
+            if(Color == "Fucsia"){
+                FrameC.style.boxShadow = '0 0 30px var(--Fucsia)';
+            }
+            else if(Color == "Amarillo"){
+                FrameC.style.boxShadow = '0 0 30px var(--Amarillo)';
+            }
+            else if(Color == "Rojo"){
+                FrameC.style.boxShadow = '0 0 30px var(--Rojo)';
+            }
+            else if(Color == "Azul"){ 
+                FrameC.style.boxShadow = '0 0 30px var(--Azul)';
+            }
+        })
+
+        function CambiarDiv() {
+            var x = document.getElementById("Inicio-Sala-Espera");
+            var y = document.getElementById("Juego");
+            if (x.style.visibility === "hidden") {
+                y.style.visibility = "hidden";
+                x.style.visibility = "visible";
+            } else {
+                x.style.visibility = "hidden";
+                y.style.visibility = "visible";
+            }
+        }
+
+        function EmpezarJuego(){
+            if(document.getElementById("u_c").textContent >= 4){
+                socket.emit("Empezar", 0);
+            }
+        }
+
+        function AJugar(){
+            console.log("Estableciendo partes");
+            socket.emit("AJugar", 0);
+        }
+
+        function ContrAJugar(){
+            AJugar();
+            console.log("Pasan 5 Segundos");
+            socket.emit("PasoSiguiente", 0);
+        }
+
+        socket.on("CambiarAJuego", (UsuariosJuego)=>{
+            console.log("Jugadores: "+ UsuariosJuego);
+            CambiarDiv();
+            setTimeout(ContrAJugar,5000);
+            console.log("Esperando...");
+        })
+
+        socket.on("SetPartes", (Partes_Disponibles)=>{
+            PartesDisponibles = Partes_Disponibles;
+            console.log("Partes del cerebro disponibles: " + PartesDisponibles);
+        })
+
+        socket.on("ActualizarMapa", (cerebro)=>{
+            Parte_1 = document.getElementById("parte_1");
+            Parte_2 = document.getElementById("parte_2");
+            Parte_3 = document.getElementById("parte_3");
+            Parte_4 = document.getElementById("parte_4");
+            Parte_5 = document.getElementById("parte_5");
+            Parte_6 = document.getElementById("parte_6");
+            Parte_7 = document.getElementById("parte_7");
+            Parte_8 = document.getElementById("parte_8");
+            Parte_9 = document.getElementById("parte_9");
+            Parte_10 = document.getElementById("parte_10");
+            Parte_11 = document.getElementById("parte_11");
+            Parte_12 = document.getElementById("parte_12");
+            Parte_13 = document.getElementById("parte_13");
+            Parte_14 = document.getElementById("parte_14");
+            Parte_15 = document.getElementById("parte_15");
+            Parte_16 = document.getElementById("parte_16");
+            Parte_17 = document.getElementById("parte_17");
+            let mapa = {
+                "1": Parte_1,
+                "2": Parte_2,
+                "3": Parte_3,
+                "4": Parte_4,
+                "5": Parte_5,
+                "6": Parte_6,
+                "7": Parte_7,
+                "8": Parte_8,
+                "9": Parte_9,
+                "10": Parte_10,
+                "11": Parte_11,
+                "12": Parte_12,
+                "13": Parte_13,
+                "14": Parte_14,
+                "15": Parte_15,
+                "16": Parte_16,
+                "17": Parte_17
+            }
+            for(let key in cerebro){
+                if(cerebro[key] == "Player1"){
+                    mapa[key].style.filter = 'invert(19%) sepia(92%) saturate(5023%) hue-rotate(315deg) brightness(95%) contrast(96%)';
+                }
+                else if(cerebro[key] == "Player2"){
+                    mapa[key].style.filter = 'invert(15%) sepia(90%) saturate(1766%) hue-rotate(345deg) brightness(111%) contrast(98%)';
+                }
+                else if(cerebro[key] == "Player3"){
+                    mapa[key].style.filter = 'invert(25%) sepia(100%) saturate(7262%) hue-rotate(354deg) brightness(106%) contrast(87%)';
+                }
+                else if(cerebro[key] == "Player4"){
+                    mapa[key].style.filter = 'invert(20%) sepia(16%) saturate(4900%) hue-rotate(164deg) brightness(88%) contrast(89%)';
+                }
+                else{
+                    mapa[key].style.filter = 'none';
+                }
+            }
+        })
+
+        socket.on("EscogerBattle", (Datos)=>{
+            Parte_1 = document.getElementById("parte_1");
+            Parte_2 = document.getElementById("parte_2");
+            Parte_3 = document.getElementById("parte_3");
+            Parte_4 = document.getElementById("parte_4");
+            Parte_5 = document.getElementById("parte_5");
+            Parte_6 = document.getElementById("parte_6");
+            Parte_7 = document.getElementById("parte_7");
+            Parte_8 = document.getElementById("parte_8");
+            Parte_9 = document.getElementById("parte_9");
+            Parte_10 = document.getElementById("parte_10");
+            Parte_11 = document.getElementById("parte_11");
+            Parte_12 = document.getElementById("parte_12");
+            Parte_13 = document.getElementById("parte_13");
+            Parte_14 = document.getElementById("parte_14");
+            Parte_15 = document.getElementById("parte_15");
+            Parte_16 = document.getElementById("parte_16");
+            Parte_17 = document.getElementById("parte_17");
+            let mapa = {
+                "1": Parte_1,
+                "2": Parte_2,
+                "3": Parte_3,
+                "4": Parte_4,
+                "5": Parte_5,
+                "6": Parte_6,
+                "7": Parte_7,
+                "8": Parte_8,
+                "9": Parte_9,
+                "10": Parte_10,
+                "11": Parte_11,
+                "12": Parte_12,
+                "13": Parte_13,
+                "14": Parte_14,
+                "15": Parte_15,
+                "16": Parte_16,
+                "17": Parte_17
+            }
+            /* De quien es el turno 
+             * Hacia quienes van dirigidos los ataques
+             */
+            let Cantidad = 0;
+            let List_Nueva = [];
+            for(let value in Datos["Partes"]){
+                Cantidad += 1;
+                List_Nueva.push(value);
+            }
+            //console.log("Cantidad de partes a iluminar: ",Cantidad);
+            for(let i=0; i<Cantidad; i++){
+                //console.log(mapa[Datos["Partes"][i]])
+                //mapa[Datos["Partes"][i]].style.boxShadow = '0 0 10px #000';
+                //mapa[Datos["Partes"][i]].style.cursor = 'pointer';
+                //console.log("Aplicar Shadow a "+Datos["Partes"][0]);
+                //console.log("Aplicar pointer a "+Datos["Partes"][0]);
+                if(Datos['Turno'] == "Player1"){
+                    if(Datos["Dueños"][i] == "Player2"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(15%) sepia(90%) saturate(1766%) hue-rotate(345deg) brightness(500%) contrast(98%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player3"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(30%) sepia(100%) saturate(7975%) hue-rotate(354deg) brightness(202%) contrast(108%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player4"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(20%) sepia(16%) saturate(4900%) hue-rotate(164deg) brightness(200%) contrast(89%)";
+                    }
+                }
+                else if(Datos['Turno'] == "Player2"){
+                    if(Datos["Dueños"][i] == "Player1"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(19%) sepia(92%) saturate(5023%) hue-rotate(315deg) brightness(195%) contrast(96%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player3"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(30%) sepia(100%) saturate(7975%) hue-rotate(354deg) brightness(202%) contrast(108%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player4"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(20%) sepia(16%) saturate(4900%) hue-rotate(164deg) brightness(200%) contrast(89%)";
+                    }
+                }
+                else if(Datos['Turno'] == "Player3"){
+                    if(Datos["Dueños"][i] == "Player1"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(19%) sepia(92%) saturate(5023%) hue-rotate(315deg) brightness(195%) contrast(96%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player2"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(15%) sepia(90%) saturate(1766%) hue-rotate(345deg) brightness(500%) contrast(98%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player4"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(20%) sepia(16%) saturate(4900%) hue-rotate(164deg) brightness(200%) contrast(89%)";
+                    }
+                }
+                else if(Datos['Turno'] == "Player4"){
+                    if(Datos["Dueños"][0] == "Player1"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(19%) sepia(92%) saturate(5023%) hue-rotate(315deg) brightness(195%) contrast(96%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player2"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(15%) sepia(90%) saturate(1766%) hue-rotate(345deg) brightness(500%) contrast(98%)";
+                    }
+                    else if(Datos["Dueños"][i] == "Player3"){
+                        mapa[Datos["Partes"][i]].style.filter = "invert(30%) sepia(100%) saturate(7975%) hue-rotate(354deg) brightness(202%) contrast(108%)";
+                    }
+                }   
+            }
+            //Se elige aleatoriamente un contrincante
+            setTimeout(AleatorioContrincante,3000,Datos["Partes"]);
+        })
+
+        function AleatorioContrincante(List_Nueva){
+            //console.log("Se envia desde aqui");
+            let Ale = getRandomArbitrary(0,List_Nueva.length-1);
+            socket.emit("BattleContra", List_Nueva[Ale]);
+        }
+
+        socket.on("Pregunta", (Pregunta)=>{
+            //clearTimeout(tiempo);
+            //console.log("Pregunta Nueva"+Pregunta);
+
+            /*Modificar en los div y button los datos de la pregunta, colocar en visible*/
+            var PreguntaQ = document.getElementById("Pregunta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+            
+            Aleatorio = getRandomArbitrary(1,4);
+            console.log("Estilo: "+Aleatorio);
+            PreguntaQ.textContent = Pregunta[0];
+            if(Aleatorio === 1){
+                Item1.onclick = Correcta;
+                Item2.onclick = Incorrecta2;
+                Item3.onclick = Incorrecta3;
+                Item4.onclick = Incorrecta4;
+
+                Item1.textContent = Pregunta[1];
+                
+                Item2.textContent = Pregunta[2];
+                Item3.textContent = Pregunta[3];
+                Item4.textContent = Pregunta[4];
+            }
+            else if(Aleatorio === 2){
+                Item1.onclick = Incorrecta1;
+                Item2.onclick = Correcta;
+                Item3.onclick = Incorrecta3;
+                Item4.onclick = Incorrecta4;
+
+                Item1.textContent = Pregunta[2];
+                Item2.textContent = Pregunta[1];
+                Item3.textContent = Pregunta[3];
+                Item4.textContent = Pregunta[4];
+            }
+            else if(Aleatorio === 3){
+                Item1.onclick = Incorrecta1;
+                Item2.onclick = Incorrecta2;
+                Item3.onclick = Correcta;
+                Item4.onclick = Incorrecta4;
+
+                Item1.textContent = Pregunta[2];
+                Item2.textContent = Pregunta[3];
+                Item3.textContent = Pregunta[1];
+                Item4.textContent = Pregunta[4];
+            }
+            else if(Aleatorio === 4){
+                Item1.onclick = Incorrecta1;
+                Item2.onclick = Incorrecta2;
+                Item3.onclick = Incorrecta3;
+                Item4.onclick = Correcta;
+
+                Item1.textContent = Pregunta[2];
+                Item2.textContent = Pregunta[3];
+                Item3.textContent = Pregunta[4];
+                Item4.textContent = Pregunta[1];
+            }
+            PreguntaQ.style.visibility = 'visible';
+            Item1.style.visibility = 'visible';
+            Item2.style.visibility = 'visible';
+            Item3.style.visibility = 'visible';
+            Item4.style.visibility = 'visible';
+            tiempo = setTimeout(Incorrecta,20000);
+        })
+        
+        function getRandomArbitrary(min, max) {
+            return Math.floor(Math.random()*(max-min+1)+min);
+        }
+
+        function Correcta(){
+            clearTimeout(tiempo);
+            console.log("Correcta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+
+            Item1.style.pointerEvents = 'none';
+            Item2.style.pointerEvents = 'none';
+            Item3.style.pointerEvents = 'none';
+            Item4.style.pointerEvents = 'none';
+
+            Item1.style.cursor = 'none';
+            Item2.style.cursor = 'none';
+            Item3.style.cursor = 'none';
+            Item4.style.cursor = 'none';
+
+            if(Aleatorio === 1){
+                Item1.style.backgroundColor = '#7BF32333';
+            }
+            else if(Aleatorio === 2){
+                Item2.style.backgroundColor = '#7BF32333';
+            }
+            else if(Aleatorio === 3){
+                Item3.style.backgroundColor = '#7BF32333';
+            }
+            else if(Aleatorio === 4){
+                Item4.style.backgroundColor = '#7BF32333';
+            }   
+            socket.emit("Correcta", 0);
+        }
+
+        function Incorrecta(){
+            console.log("No responde");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+
+            Item1.style.pointerEvents = 'none';
+            Item2.style.pointerEvents = 'none';
+            Item3.style.pointerEvents = 'none';
+            Item4.style.pointerEvents = 'none';
+
+            Item1.style.cursor = 'none';
+            Item2.style.cursor = 'none';
+            Item3.style.cursor = 'none';
+            Item4.style.cursor = 'none';
+            socket.emit("Incorrecta", 0);
+        }
+
+        function Incorrecta1(){
+            clearTimeout(tiempo);
+            console.log("Incorrecta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+
+            Item1.style.pointerEvents = 'none';
+            Item2.style.pointerEvents = 'none';
+            Item3.style.pointerEvents = 'none';
+            Item4.style.pointerEvents = 'none';
+
+            Item1.style.cursor = 'none';
+            Item2.style.cursor = 'none';
+            Item3.style.cursor = 'none';
+            Item4.style.cursor = 'none';
+            Item1.style.backgroundColor = '#F3232333';
+            socket.emit("Incorrecta", 0);
+        }
+
+        function Incorrecta2(){
+            clearTimeout(tiempo);
+            console.log("Incorrecta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+
+            Item1.style.pointerEvents = 'none';
+            Item2.style.pointerEvents = 'none';
+            Item3.style.pointerEvents = 'none';
+            Item4.style.pointerEvents = 'none';
+
+            Item1.style.cursor = 'none';
+            Item2.style.cursor = 'none';
+            Item3.style.cursor = 'none';
+            Item4.style.cursor = 'none';
+            Item2.style.backgroundColor = '#F3232333';
+            socket.emit("Incorrecta", 0);
+        }
+
+        function Incorrecta3(){
+            clearTimeout(tiempo);
+            console.log("Incorrecta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+
+            Item1.style.pointerEvents = 'none';
+            Item2.style.pointerEvents = 'none';
+            Item3.style.pointerEvents = 'none';
+            Item4.style.pointerEvents = 'none';
+
+            Item1.style.cursor = 'none';
+            Item2.style.cursor = 'none';
+            Item3.style.cursor = 'none';
+            Item4.style.cursor = 'none';
+            Item3.style.backgroundColor = '#F3232333';
+            socket.emit("Incorrecta", 0);
+        }
+
+        function Incorrecta4(){
+            clearTimeout(tiempo);
+            console.log("Incorrecta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+
+            Item1.style.pointerEvents = 'none';
+            Item2.style.pointerEvents = 'none';
+            Item3.style.pointerEvents = 'none';
+            Item4.style.pointerEvents = 'none';
+
+            Item1.style.cursor = 'none';
+            Item2.style.cursor = 'none';
+            Item3.style.cursor = 'none';
+            Item4.style.cursor = 'none';
+            Item4.style.backgroundColor = '#F3232333';
+            socket.emit("Incorrecta", 0);
+        }
+
+        function VaciarPregunta(){
+            var Pregunta = document.getElementById("Pregunta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+            Pregunta.textContent = "";
+            Item1.textContent = "";
+            Item2.textContent = "";
+            Item3.textContent = "";
+            Item4.textContent = "";
+
+            Item1.style.pointerEvents = 'auto';
+            Item2.style.pointerEvents = 'auto';
+            Item3.style.pointerEvents = 'auto';
+            Item4.style.pointerEvents = 'auto';
+
+            Item1.style.cursor = 'pointer';
+            Item2.style.cursor = 'pointer';
+            Item3.style.cursor = 'pointer';
+            Item4.style.cursor = 'pointer';
+
+            Item1.style.backgroundColor = '#fff';
+            Item2.style.backgroundColor = '#fff';
+            Item3.style.backgroundColor = '#fff';
+            Item4.style.backgroundColor = '#fff';
+
+            Pregunta.style.visibility = 'hidden';
+            Item1.style.visibility = 'hidden';
+            Item2.style.visibility = 'hidden';
+            Item3.style.visibility = 'hidden';
+            Item4.style.visibility = 'hidden';
+
+            console.log("Pregunta eliminada");
+            
+            if(PartesDisponibles == 0){
+                setTimeout(Sig2,2000);
+            }
+            else{
+                socket.emit("DarParte", 0);
+                setTimeout(Sig,2000);
+            }
+        }
+
+        function VaciarPregunta2(){
+            var Pregunta = document.getElementById("Pregunta");
+            var Item1 = document.getElementById("Item1");
+            var Item2 = document.getElementById("Item2");
+            var Item3 = document.getElementById("Item3");
+            var Item4 = document.getElementById("Item4");
+            Pregunta.textContent = "";
+            Item1.textContent = "";
+            Item2.textContent = "";
+            Item3.textContent = "";
+            Item4.textContent = "";
+
+            Item1.style.pointerEvents = 'auto';
+            Item2.style.pointerEvents = 'auto';
+            Item3.style.pointerEvents = 'auto';
+            Item4.style.pointerEvents = 'auto';
+
+            Item1.style.cursor = 'pointer';
+            Item2.style.cursor = 'pointer';
+            Item3.style.cursor = 'pointer';
+            Item4.style.cursor = 'pointer';
+
+            Item1.style.backgroundColor = '#fff';
+            Item2.style.backgroundColor = '#fff';
+            Item3.style.backgroundColor = '#fff';
+            Item4.style.backgroundColor = '#fff';
+
+            Pregunta.style.visibility = 'hidden';
+            Item1.style.visibility = 'hidden';
+            Item2.style.visibility = 'hidden';
+            Item3.style.visibility = 'hidden';
+            Item4.style.visibility = 'hidden';
+
+            console.log("Pregunta eliminada");
+            
+            tiempo = setTimeout(Sig3,2000);
+        }
+
+
+        socket.on("FinalizarPregunta", ()=>{
+            setTimeout(VaciarPregunta,2000);
+        })
+
+        socket.on("FinalizarPregunta2", ()=>{
+            setTimeout(VaciarPregunta2,2000);
+        })
+
+        function Sig(){
+            socket.emit("PasoSiguiente", 0);
+        }
+
+        function Sig2(){
+            socket.emit("Round2", 0);
+        }
+
+        function Sig3(){
+            console.log("Estoy Aqui");
+            socket.emit("PasoSiguiente", 0);
+        }
+
+    </script>
+    <script type="text/javascript" src="./scripts/particles.js"></script>
+    <script type="text/javascript" src="./scripts/app.js"></script>
+</body>
+</html>
