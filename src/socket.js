@@ -740,7 +740,7 @@ function Llenado() {
     /**
      * Datos iniciales - BORRAR LUEGO
      */
-    
+    /*
      Cerebro["1"]= "Player1";
      Cerebro["3"]= "Player1";
      Cerebro["4"]= "Player1";
@@ -771,7 +771,7 @@ function Llenado() {
     Jugadores["Player4"].push(16)
     Jugadores["Player4"].push(17)
      Partes_Disponibles -= 13;
-     
+     */
 }
 
 function shuffleArray(inputArray){
