@@ -34,7 +34,7 @@ body {
   overflow: auto;
   flex-direction: row;
   position: absolute;
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 .Descripcion {
@@ -257,7 +257,7 @@ a {
   border-width: 1px;
   border-style: dashed;
   text-align: center;
-  pointer-events: none;
+  /*pointer-events: none;*/
   border-color: #1b1b1b;
   color: #000;
   font-family: "Alexandria", sans-serif;
